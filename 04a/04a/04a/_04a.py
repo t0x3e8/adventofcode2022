@@ -1,20 +1,16 @@
 fContent =  open("Input.txt", "r").readlines();
 
-def toWord(sec):
-    word = ""
-    r = sec.split("-")
-    for i in range(int(r[0]), int(r[1])+1):
-        word += (str(i))
-    return word
-
 redundantPairs = 0
+
+lineNumber = []
 for line in fContent:
     sections = line.split(",")
-    s1 = toWord(sections[0])
-    s2 = toWord(sections[1])
+    r1 = sections[0].split("-")
+    r2 = sections[1].split("-")
+    s1, e1 = int(r1[0]), int(r1[1])+1
+    s2, e2 = int(r2[0]), int(r2[1])+1
 
-    if s1 in s2 or s2 in s1:
+    if (s1 <= s2 and e1 >= e2) or (s1 >= s2 and e1 <= e2):
         redundantPairs += 1
 
 print("Redundant pairs: ", redundantPairs)
-    

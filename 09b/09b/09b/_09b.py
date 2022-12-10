@@ -30,9 +30,9 @@ for line in fContent:
     for i in range(len(ropes)):
         for j in range(0, int(length)):
             h = moveH(h, directory)
-            distance = dist(h, r)
+            distance = dist(h, ropes[i])
             if distance >= 2:
-                t = moveT(h, r, directory)
+                t = moveT(h, ropes[i], directory)
                 fields.append(t)
             print("h:", h, "t:", t, "dist:", distance)
 

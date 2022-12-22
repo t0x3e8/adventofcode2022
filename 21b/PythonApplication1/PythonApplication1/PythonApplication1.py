@@ -13,21 +13,7 @@ def createEquation(key):
         return f"({createEquation(keys[0])} {monkeys[key][5:6]} {createEquation(keys[1])})"
     return f"{monkeys[key]}"
     
-def getValue(key, sValue):
-    if not monkeys[key].isdigit():
-        v = monkeys[key]
-        keys = re.findall(r"[a-z]+", v)
-
-        fValue = getValue(keys[0])
-        sValue = getValue(keys[1])
-        
-        v = v.replace(keys[0], fValue).replace(keys[1], sValue)
-        return str(int(eval(v)))
-    else:
-        return monkeys[key]
-
 rootKeys = re.findall(r"[a-z]+", monkeys["root"])
-
 sEquation = eval(createEquation(rootKeys[1]))
 fEquation = createEquation(rootKeys[0])
 

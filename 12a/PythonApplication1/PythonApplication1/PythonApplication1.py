@@ -1,57 +1,63 @@
+from collections import deque
+import time
+
 def readData(path):
     data = []
     with open(path, "r") as fContent:
         for line in fContent.readlines():
-            data.append(list(line.strip()))
+            data.append([ord(c) for c in line.strip()])
 
     return data
 
-def DFS(grid, startRow, startCol): 
+def getNeighbors(grid, row, col, rows, cols):
+    result = []
+    for r, c in [(row-1, col), (row+1, col), (row, col-1), (row, col+1)]:
+        if 0 <= r < rows and 0 <= c < cols:
+            if grid[row][col] <= grid[r][c] <= (grid[row][col] + 1):
+                result.append((r, c))
+    return result
+     
+def countMoves(visited):
+    lvisited = list(visited.items())
+    node = lvisited[-1]
+    counter = 0
+    while True:
+        nodes = [element for element in lvisited if element[0] == node[1]]
+        if len(nodes) == 0: break
+        else:
+            counter += 1
+            node = nodes[0]
+    return counter
+
+def BFS(grid, startPos, endPos): 
     rows = len(grid)
     cols = len(grid[0])
-    visited = [[False for _ in range(cols)] for _ in range(rows)]
-    steps = [[1 for _ in range(cols)] for _ in range(rows)]
-    queue = [(startRow, startCol)]
+    visited = set()
+    movements = { (startPos[0], startPos[1]) : None }
+    queue = deque([(startPos[0], startPos[1])], 20000000)
     
     while queue:
-        row, col = queue.pop(0)
-        if not visited[row][col]:
-            visited[row][col] = True
-            
-            for r, c in [(row+1, col), (row-1, col), (row, col+1), (row, col-1)]:
-                if 0 <= r < rows and 0 <= c < cols and not visited[r][c]:
-                    if grid[r][c] == "E" and grid[row][col] == "z":
-                        print(f"Shortest path consists of {steps[row][col]} steps.")
-                        return (visited, steps)
-                    if grid[r][c] == grid[row][col] or grid[r][c] == chr(ord(grid[row][col]) + 1): 
-                        queue.append((r, c))
-                        steps[r][c] = steps[row][col] + 1
+        row, col = queue.popleft()
+        if row == endPos[0] and col == endPos[1]:
+            return movements
+        
+        visited.add((row, col))
 
-    return (visited, steps)
-
+        for r, c in getNeighbors(grid, row, col, rows, cols):
+            if (r, c) not in visited:
+                queue.append((r, c))
+                movements[(r, c)] = (row, col)
+                
 data = readData("input.txt")
-SPos = [(iy, ix) for iy, row in enumerate(data) for ix, c in enumerate(row) if c == "S"][0]
-data[SPos[0]][SPos[1]] = "a"
+SPos = [(iy, ix) for iy, row in enumerate(data) for ix, c in enumerate(row) if c == ord("S")][0]
+EPos = [(iy, ix) for iy, row in enumerate(data) for ix, c in enumerate(row) if c == ord("E")][0]
+data[SPos[0]][SPos[1]] = ord("a")
+data[EPos[0]][EPos[1]] = ord("z")
 
-visted, steps = DFS(data, SPos[0], SPos[1])
+startTimer = time.time()
+visited = BFS(data, SPos, EPos)
+endTimer = time.time()
+elapsedTimer = endTimer - startTimer
 
-
-
-# PRINTING ---------------------------------------
-print("visited-------------------------")
-for row in visted:
-    for cell in row:
-        print(f"[{int(cell)}] ", end="")
-    print("\n")
-    
-print("steps----------------------------")
-for row in steps:
-    for cell in row:
-        print(f"[{int(cell)}] ", end="")
-    print("\n")
-
-print("values---------------------------")
-for row in data:
-    for cell in row:
-        print(f"[{cell}] ", end="")
-    print("\n")
+print(f"Time elapsed: {elapsedTimer:.5f} seconds")
+print(f"Steps count: {countMoves(visited)}")

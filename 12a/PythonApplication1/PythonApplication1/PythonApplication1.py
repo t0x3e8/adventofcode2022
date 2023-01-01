@@ -34,7 +34,7 @@ def BFS(grid, startPos, endPos):
     cols = len(grid[0])
     visited = set()
     movements = { (startPos[0], startPos[1]) : None }
-    queue = deque([(startPos[0], startPos[1])], 20000000)
+    queue = deque([(startPos[0], startPos[1])])
     
     while queue:
         row, col = queue.popleft()

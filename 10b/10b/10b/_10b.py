@@ -1,38 +1,33 @@
+﻿fContent = open("input.txt", "r").readlines()
 
-fContent = open("testinput.txt", "r").readlines()
-
-#def p(ccl, X, line):
-#    if ccl % 40 == 0:
-#        print("Cycle ","{:3d}".format(ccl)," -> ", end="")
-#    elif ccl % 39 == 0:
-#        print(" <- Cycle")
-#    #if ccl == 20 or ccl >= 60 and (ccl-20) %40 == 0  :
-#        #print(f"Cycle: {ccl}, X: {X}, line: {line}")
-
-def p(px):
-    for i in range(0, len(px), 40):
+def print2(px):
+    i = 0
+    for row in px:
         print("Cycle ","{:3d}".format(i + 1)," -> ", end="")
-        for j in range(0, 40):
-            print(px[i+j], end="")
-        print(" <- Cycle", "{:3d}".format(i + j + 1))
-
-def Part2():
+        for c in row:
+            print(c, end="")
+        print(" <- Cycle", "{:3d}".format(i + 40))
+        i += 40
+        
+def Part2(px):
     ccl = 0
-    X = 1
-    px  = ["#"] * 240
-    p(px)
+    x = 1
 
     for line in fContent:
-        ccl += 1
-        #p(ccl, X, line)
-        inst = line[:4]
-        
-        if inst == "addx":
-            V = int(line.strip()[5:])
-            ccl += 1   
-            #p(ccl, X, line)
-            X += V
+        for _ in range(2):
+            ccl += 1
+            crow, cpix = divmod(ccl-1, 40)
+            if x-1 <= cpix <= x+1: 
+                px[crow][cpix] = '#'
+            else: 
+                px[crow][cpix] = '.'
+            
+            if not line.startswith('add'): break
 
-    #p(ccl + 1, X, "")
+        else: 
+            x += int(line.strip()[5:])
 
-Part2()
+    
+px = [['.']*40 for _ in range(6)]
+Part2(px)
+print2(px)

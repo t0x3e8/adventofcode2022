@@ -1,4 +1,4 @@
-fContent = open("input.txt", "r").readlines()
+fContent = open("testinput.txt", "r").readlines()
 
 def p(ccl, X, line):
     if ccl == 20 or ccl >= 60 and (ccl-20) %40 == 0  :
